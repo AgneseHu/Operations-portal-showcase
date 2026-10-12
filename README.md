@@ -106,22 +106,35 @@ The tool is designed to reduce repetitive manual preparation when processing cus
 
 #### Back Order Customer Allocation
 
-Processes Back Order data and generates a standardized customer allocation output.
+Extracts allocation results for assigned customers from a centrally prepared Back Order allocation summary and generates a standardized customer-specific output.
 
-```
-Back Order File
-        +
-Stock Plan (Availability / Allocation Data)
-        ↓
-Customer Allocation Logic
-        ↓
-Standardized BO Allocation Output
-```
 ### 2. ETA Lookup
 
-The ETA Lookup tool combines Back Order information with stock and planning data to provide item-level availability, warehouse ETA, and estimated dispatch visibility.
+The ETA Lookup tool combines Back Order information with stock-planning data to provide item-level availability, warehouse ETA, allocation visibility, and estimated dispatch visibility.
 
-Stock arrivals are allocated to open orders using FIFO based on order date, with earlier orders prioritized. Estimated Dispatch is then calculated as Warehouse ETA + 7 working days, excluding weekends and Italian national public holidays retrieved through a public holiday API.
+Stock arrivals are allocated to open orders using FIFO (First-In, First-Out) based on order date, prioritizing earlier orders. The tool then calculates the Estimated Dispatch date as Warehouse ETA + 7 working days, automatically excluding weekends and Italian national public holidays retrieved via a public holiday API. 
+
+The tool applies the following allocation and dispatch calculation logic:
+```
+Back Order Data
+        +
+Stock Planning Data
+        ↓
+Match Customer / Model / Open PO
+        ↓
+Sort Open Orders by Order Date
+        ↓
+FIFO Stock Allocation
+        ↓
+Determine Allocation Status
+        ↓
+Warehouse ETA
+        ↓
++ 7 Working Days
+(excluding weekends and Italian public holidays)
+        ↓
+Estimated Dispatch Date
+```
 
 ![ETA Lookup](screenshots/ETA_lookup.png)
 
@@ -130,52 +143,60 @@ This reduces the need to manually cross-reference multiple source files when che
 ### 3. Sales Report Processing & Consolidation
 
 Portal Entry Point:
+
 ![Sales Report Workspace](screenshots/sales_report_workplace.png)
 
 The Sales Report section provides centralized access to recurring sales reporting files and launches a dedicated processing application.
 
 Processing Tool:
+
 ![Sales Report Processing Tool](screenshots/sales_report_tool.png)
 
-The standalone tool processes and consolidates recurring sales reports and performs additional validation and RMA matching.
+The standalone tool processes and consolidates multiple sales report files, performs RMA matching, and applies validation checks before generating standardized monthly outputs.
 
-The tool supports activities such as:
-- Processing multiple reporting files at once
+Key functions include:
+- Processing multiple sales report files at once
 - Consolidating recurring sales data
 - Matching current-month RMA records
 - Checking data consistency
 - Identifying missing or abnormal records
 - Generating standardized output files
   
-The objective is to reduce manual Excel consolidation and make recurring sales reporting more consistent and repeatable.
+The goal is to reduce repetitive manual Excel work and make monthly sales reporting more consistent, reliable, and repeatable.
 
 ### 4. Monthly Rebate Accrual
 
 Portal Entry Point:
+
 ![Monthly Accrual Workspace](screenshots/monthly_accrual_workspace.png)
 
 The Monthly Accrual workspace provides access to a dedicated Streamlit-based rebate calculation tool.
 
 Rebate Accrual Tool:
+
 ![Rebate Accrual Tool](screenshots/rebate_accrual_tool.png)
 
-The tool processes sales data together with rebate rules and templates to support monthly accrual preparation.
+The tool combines sales data with a custom rebate template that I designed to encode customer-specific rebate rules, matching conditions, and calculation logic for monthly accrual preparation.
 
-Workflow:
+The tool applies the following workflow:
+
 ```
 Sales Report
-        +
-Rebate Template
-        ↓
+      +
+Custom Rebate Template
+(Customer Rules / Matching Logic / Calculation Logic)
+      ↓
 Customer / Rule Matching
-        ↓
+      ↓
 Validation
-        ↓
+      ↓
 Automated Rebate Calculation
-        ↓
+      ↓
 Monthly Accrual Output
 ```
-The goal is to reduce repetitive manual calculation and standardize the monthly accrual preparation process.
+The rebate template and underlying business logic were designed around the actual accrual workflow, allowing complex rebate conditions to be handled consistently through a repeatable process.
+
+The goal is to reduce repetitive manual calculation and standardize monthly rebate accrual preparation.
 
 ## 💡 Project Evolution
 
